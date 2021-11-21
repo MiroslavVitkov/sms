@@ -11,6 +11,16 @@ CONF_FILE = './conf'
 BROWSER_VISIBLE = False
 
 
+def init_conf():
+    conf = [ConfigParser()]
+    conf[0].read(CONF_FILE)
+    return conf
+
+
+def get_conf(conf=init_conf()):
+    return conf[0]
+
+
 def print_help():
     print('This program sends a sms via your Telenor credentials.')
     print('usage: sms phonenumber message')
@@ -22,14 +32,10 @@ def hide_browser():
 
 
 def log_in(driver):
-    conf = ConfigParser()
-    conf.read(CONF_FILE)
-    conf = conf['credentials']
-
     driver.get('https://my.telenor.bg')
-    driver.find_element_by_name('phone').send_keys(conf['num'])
+    driver.find_element_by_name('phone').send_keys(get_conf()['credentials']['num'])
     driver.find_element_by_id('button-next').click()
-    driver.find_element_by_id('pin').send_keys(conf['password'])
+    driver.find_element_by_id('pin').send_keys(get_conf()['credentials']['password'])
     driver.find_element_by_id('button-next').click()
 
 

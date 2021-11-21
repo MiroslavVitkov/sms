@@ -34,7 +34,8 @@ def hide_browser():
 
 def log_in(driver):
     driver.get('https://my.telenor.bg')
-    driver.find_element_by_name('phone').send_keys(get_conf()['credentials']['num'])
+    # Remove the leading zero as +359 is automatically provided.
+    driver.find_element_by_name('phone').send_keys(get_conf()['credentials']['num'][1:])
     driver.find_element_by_id('button-next').click()
     driver.find_element_by_id('pin').send_keys(get_conf()['credentials']['password'])
     driver.find_element_by_id('button-next').click()
@@ -56,29 +57,29 @@ def clean_up(driver):
 
 
 # Remove the leading 0 because +359 is automatically added.
-def remove_zero(num):
-    if not (re.match('0895\d\d\d\d\d\d', target)
-        or re.match('0899\d\d\d\d\d\d', target)):
+def sanitize(num):
+    if not (re.match('0895\d\d\d\d\d\d', num)
+        or re.match('0899\d\d\d\d\d\d', num)):
         raise BaseException('This is not a Telenor phone number.')
 
-    return num[1:]
+    return num
 
 
 # target - phone number OR a name from conf/phonebook
 def get_target_num(target):
     try:
-        return remove_zero(target)
+        return sanitize(target)
     except:
         pass
 
     try:
         pb = get_conf()['phonebook']
         if target in pb:
-            return pb[target][1:]
+            return sanitize(pb[target])
     except:
         pass
 
-    raise BaseException('Failed to identify recepient.')
+    raise BaseException('Failed to identify recepient:', target)
 
 
 if __name__ == '__main__':

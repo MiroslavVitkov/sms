@@ -48,7 +48,7 @@ def send(driver, num, msg):
     driver.find_element_by_id('receiverPhoneNum').send_keys(num)
     driver.find_element_by_id('txtareaMessage').send_keys(msg)
     driver.find_element_by_css_selector('.purple-pink-gradient').click()
-    print('Sent', msg, 'to +359', num)
+    print('Sent "' + msg + '" to +359', num)
 
 
 # Without this the browser survives program termination.
@@ -92,5 +92,6 @@ if __name__ == '__main__':
 
     driver = webdriver.Firefox()
     log_in(driver)
-    send(driver, get_target_num(sys.argv[1]), sys.argv[2])
+    msg = ' '.join(sys.argv[2:])
+    send(driver, get_target_num(sys.argv[1]), msg)
     clean_up(driver)
